@@ -71,8 +71,7 @@ button:active {
     padding: 20px;
     text-align: center;
     transition: transform 0.3s ease, opacity 0.3s ease;
-    font-size: 12px;
-    width: 200px;
+    width: 210px;
     height: 200px;
     display: grid;
     align-items: center;
@@ -83,10 +82,12 @@ button:active {
 
 h2 {
     display: inline;
+    font-size: 16px;
 }
 
 p {
     display: inline;
+    font-size: 16px;
 }
 
 #change {
@@ -100,4 +101,30 @@ p {
     border: none;
     border-radius: 5px;
     cursor: pointer;
+}
+
+#weather-result {
+    position: absolute;
+    top: 220px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.5rem;
+}
+
+
+/* Spinner za cekanje */
+.spinner {
+  border: 4px solid rgba(0,0,0,0.1);
+  border-left-color: #4caf50; /* boja spinnanja */
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
