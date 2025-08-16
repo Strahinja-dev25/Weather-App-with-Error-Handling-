@@ -1,0 +1,103 @@
+/* Animacija pri promeni grada (fade in/out). */
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+.container {
+    margin: 140px auto;
+    max-width: 1200px;
+    height: 600px;
+    padding: 20px;
+    text-align: center;
+    background-color: white;
+    border-radius: 20px;
+    border: 3px solid #28a745;
+    position: relative;
+}
+
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+}
+
+input {
+    display: block;
+    width: 50%;
+    padding: 10px;
+    font-size: 1.2rem;
+    margin: 20px auto;
+    border: 2px solid #28a745;
+    border-radius: 5px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+button:hover {
+    background-color: #218838;
+}
+button:active {
+    background-color: #1e7e34;
+}
+
+.forecast {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 20px;
+    position: absolute;
+    top: 350px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.card {
+    background-color: #f8f9fa;
+    border: 2px solid #28a745;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    font-size: 12px;
+    width: 200px;
+    height: 200px;
+    display: grid;
+    align-items: center;
+}
+.card:hover {
+    transform: scale(1.05);
+}
+
+h2 {
+    display: inline;
+}
+
+p {
+    display: inline;
+}
+
+#change {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
