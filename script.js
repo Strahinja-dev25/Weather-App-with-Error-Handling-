@@ -36,9 +36,7 @@ async function show () {
     const url = `https://api.openweathermap.org/data/2.5/forecast?q=${encodeURIComponent(cityName)}&appid=${apiKey}&units=metric&lang=en`;
 
     try {
-        const res = await fetch(url);
-        if (!res.ok) throw new Error("Ne možemo da pronađemo grad koji ste uneli. Proverite pravopis i pokušajte ponovo.");
-        const data = await res.json();
+        const data = await fetchWeather(url);
 
         // update UI...
         result.textContent = `📍 Prikazujem vreme za ${data.city.name}`;
@@ -46,14 +44,7 @@ async function show () {
         // sačuvaj u localStorage
         localStorage.setItem("lastCity", cityName);
 
-        const indices = [0, 8, 16, 24, 32]; // približno 5 dana
-        cards.forEach((card, i) => {
-            const item = data.list[indices[i]];
-            card.querySelector(`#temperature-${i+1}`).textContent = item.main.temp + " °C";
-            card.querySelector(`#condition-${i+1}`).textContent = item.weather[0].description;
-            card.querySelector(`#humidity-${i+1}`).textContent = item.main.humidity + " %";
-            card.querySelector(`#wind-speed-${i+1}`).textContent = item.wind.speed + " m/s";
-        });
+        renderWeather(data, isCelsius);//posebna funkcija za prikazivanje kartica. Na dnu.
     }
     catch (err) {
         if (err.message.includes("Grad")) {
@@ -78,25 +69,12 @@ async function change() {
     const url = `https://api.openweathermap.org/data/2.5/forecast?q=${encodeURIComponent(cityName)}&appid=${apiKey}&units=metric&lang=en`;
 
     try {
-        const res = await fetch(url);
-        if (!res.ok) throw new Error("Ne možemo da pronađemo grad koji ste uneli. Proverite pravopis i pokušajte ponovo.");
-        const data = await res.json();
+        const data = await fetchWeather(url);
 
         result.textContent = `📍 Prikazujem vreme za ${data.city.name}`;
         changeBtn.textContent = changeBtn.textContent === "°F" ? "°C" : "°F";
 
-        const indices = [0, 8, 16, 24, 32]; // približno 5 dana
-        cards.forEach((card, i) => {
-                const item = data.list[indices[i]];
-                let temp = item.main.temp;
-
-                if (!isCelsius) {
-                    // C -> F
-                    temp = (temp * 9/5) + 32;
-                }
-
-                card.querySelector(`#temperature-${i+1}`).textContent = temp.toFixed(1) + (isCelsius ? " °C" : " °F");
-            });
+        renderWeather(data, isCelsius);//posebna funkcija za prikazivanje kartica. Na dnu.
     }
     catch (err) {
         if (err.message.includes("Grad")) {
@@ -120,9 +98,7 @@ async function autocomplete () {
     const url = `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(query)}&limit=5&appid=${apiKey}`;
 
     try {
-        const res = await fetch(url);
-        if (!res.ok) throw new Error("Greška u autocomplete fetch-u.");
-        const data = await res.json();
+        const data = await fetchWeather(url);
 
         // očisti staru listu
         suggestions.innerHTML = "";
@@ -157,24 +133,12 @@ async function myLocation () {
             const lat = pos.coords.latitude;
             const lon = pos.coords.longitude;
             const apiKey = "3b7488a13b75004615790f8f7b870265";
-
             const url = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric&lang=en`;
 
             try {
-                const res = await fetch(url);
-                if (!res.ok) throw new Error("Ne možemo da pronađemo podatke za tvoju lokaciju.");
-                const data = await res.json();
+                fetchWeather(url);
 
-                result.textContent = `📍 Prikazujem vreme za ${data.city.name}`;
-
-                const indices = [0, 8, 16, 24, 32];
-                cards.forEach((card, i) => {
-                    const item = data.list[indices[i]];
-                    card.querySelector(`#temperature-${i+1}`).textContent = item.main.temp + " °C";
-                    card.querySelector(`#condition-${i+1}`).textContent = item.weather[0].description;
-                    card.querySelector(`#humidity-${i+1}`).textContent = item.main.humidity + " %";
-                    card.querySelector(`#wind-speed-${i+1}`).textContent = item.wind.speed + " m/s";
-                });
+                renderWeather(data, isCelsius);//posebna funkcija za prikazivanje kartica. Na dnu.
             }
             catch (err) {
                 result.textContent = "⚠️ Greška pri učitavanju podataka sa lokacije.";
@@ -184,4 +148,37 @@ async function myLocation () {
             result.textContent = "❌ Ne možemo da pristupimo tvojoj lokaciji. Dozvoli pristup ili unesi grad ručno.";
         }
     );
+}
+
+function renderWeather(data, isCelsius = true) {
+    result.textContent = `📍 Prikazujem vreme za ${data.city.name}`;
+
+    const indices = [0, 8, 16, 24, 32]; // približno 5 dana
+    cards.forEach((card, i) => {
+        const item = data.list[indices[i]];
+        let temp = item.main.temp;
+
+        // ako je °F
+        if (!isCelsius) temp = (temp * 9/5) + 32;
+
+        // temperatura
+        card.querySelector(`#temperature-${i+1}`).textContent = 
+            temp.toFixed(1) + (isCelsius ? " °C" : " °F");
+
+        // ikonica + opis
+        const iconCode = item.weather[0].icon;
+        const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
+        card.querySelector(`#condition-${i+1}`).innerHTML = 
+            `${item.weather[0].description} <img src="${iconUrl}" alt="${item.weather[0].description}" style="width: 40px; vertical-align: middle;">`;
+
+        // vlaznost i vetar
+        card.querySelector(`#humidity-${i+1}`).textContent = item.main.humidity + " %";
+        card.querySelector(`#wind-speed-${i+1}`).textContent = item.wind.speed + " m/s";
+    });
+}
+
+async function fetchWeather(url) {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("Greška pri dohvatanju podataka.");
+    return res.json();
 }
