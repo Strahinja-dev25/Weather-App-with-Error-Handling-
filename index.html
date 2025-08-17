@@ -11,11 +11,13 @@
         <h1>Weather App</h1>
         <form id="weather-form">
             <input type="text" id="city" placeholder="Enter city name" required>
+            <ul id="suggestions"></ul>
             <button type="button" id="submit">Get Weather</button>
         </form>
         <div id="weather-result"></div>
         <!-- Prikaz temperature i ikonice za opis vremena (sunce, kisa, oblak, sneg, sunce i oblak, grad(led), jako sunce?) -->
         <button id="change">°C</button>
+        <button id="geoBtn">📍 My Location</button>
         <!-- Boja ili slika pozadine (body) menja se u zavisnosti od vremena: Sunčano → svetla, plava pozadina, Kiša → tamnija, siva ili kišni gradient, Noć → tamna, možda zvezde -->
 
         <div class="forecast">
